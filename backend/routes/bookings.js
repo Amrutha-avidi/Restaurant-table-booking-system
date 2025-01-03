@@ -29,7 +29,9 @@ router.post('/', async (req, res) => {
     }
 });
 
-
+router.get('/',(res,res)=>{
+    res.json("its working")
+})
 
 // Get Available Slots for a specific date
 router.get('/bookings', async (req, res) => {
