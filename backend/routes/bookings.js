@@ -4,7 +4,7 @@ const Booking = require('../models/Booking');
 
 const availableSlots = [
     "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
-    "21:00", "21:30", "21:30", "22:00"
+    "21:00", "21:30", "22:00"
 ];
 // Create Booking
 router.post('/', async (req, res) => {
@@ -29,24 +29,30 @@ router.post('/', async (req, res) => {
     }
 });
 
-// router.get("/", async (req, res) => {
-//     res.status(200).json({ msg: 'success fetch bookings' })
-// })
 
 
 // Get Available Slots for a specific date
 router.get('/bookings', async (req, res) => {
     const { date } = req.query;  // Expecting date as a query param
-
     try {
+        const startDate = new Date(date)
+        const endDate = new Date(date);
+        endDate.setDate(startDate.getDate() + 1);
+
         // Find all bookings for the selected date
-        const bookings = await Booking.find({ date });
+        const bookings = await Booking.find({
+            date: {
+                $gte: startDate,
+                $lt: endDate,
+            },
 
+        });
         // Extract booked times for that date
-        const bookedTimes = bookings.map(booking => booking.time);
 
+        const bookedTimes = bookings.map(booking => booking.time);
         // Filter out booked times from available slots
         const available = availableSlots.filter(slot => !bookedTimes.includes(slot));
+
 
         if (available.length === 0) {
             return res.status(200).json({ message: "No available slots for the selected date" });
@@ -60,18 +66,25 @@ router.get('/bookings', async (req, res) => {
 });
 
 // Delete Booking
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await Booking.findByIdAndDelete(id);
-    if (!result) {
-      return res.status(404).json({ error: 'Booking not found' });
+router.delete('/bookings', async (req, res) => {
+    const { date, slot } = req.query;
+   
+    if (!date || !slot) {
+        return res.status(400).json({ message: 'Date and slot are required' });
     }
-    res.status(200).json({ message: 'Booking deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete booking' });
-  }
+
+    try {
+        const result = await Booking.deleteOne({ date, time: slot });
+        console.log(result)
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'No booking found for the given date and slot' });
+        }
+
+        res.status(200).json({ message: 'Booking deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting booking:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 module.exports = router;
