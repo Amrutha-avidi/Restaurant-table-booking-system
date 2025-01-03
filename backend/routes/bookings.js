@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/',(res,res)=>{
+router.get('/',(req,res)=>{
     res.json("its working")
 })
 
