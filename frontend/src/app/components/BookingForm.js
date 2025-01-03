@@ -80,7 +80,6 @@ const BookingForm = () => {
         try {
             const url = `${config.backendBaseURL}/`;
             const response = await axios.post(url, bookingData);
-            console.log(bookingData)
             const selectedBooking = response.data;
             if (selectedBooking.error) {
                 setErrorMessage(selectedBooking.error); // Handle booking error
