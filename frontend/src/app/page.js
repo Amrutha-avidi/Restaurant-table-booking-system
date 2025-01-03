@@ -1,8 +1,14 @@
 
+import BookingForm from "./components/BookingForm";
+
+
+
+
 export default function Home() {
   return (
-    <div>
-      <h1>hi</h1>
-    </div>
+    <>
+      <BookingForm />
+      
+    </>
   );
 }

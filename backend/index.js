@@ -16,7 +16,7 @@ mongoose
 
 // Import Routes
 const bookingRoutes = require('./routes/bookings');
-app.use('/api/bookings', bookingRoutes);
+app.use('/', bookingRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
